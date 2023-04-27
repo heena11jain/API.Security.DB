@@ -43,17 +43,24 @@ namespace IDServer
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
-                new ApiScope("myApi.read"),
-                new ApiScope("myApi.write"),
+                new ApiScope("myApi.read", "read permission for API 1"),
+                new ApiScope("myApi.write", "write permission for API 1"),
+                new ApiScope("myApi2.read", "read permission for API 2"),
+                new ApiScope("myApi2.write", "write permission for API 2"),
             };
 
         //This will define API and its scopes and secret. This secret code will be hashed and will be save internally with IdentityServer
         public static IEnumerable<ApiResource> ApiResources =>
             new ApiResource[]
             {
-                new ApiResource("myApi")
+                new ApiResource("resource_myApi")
                 {
                     Scopes = new List<string>{ "myApi.read","myApi.write" },
+                    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
+                },
+                new ApiResource("myApi2")
+                {
+                    Scopes = new List<string>{ "myApi2.read","myApi.write" },
                     ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
                 }
             };
@@ -64,12 +71,20 @@ namespace IDServer
             {
                 new Client
                 {
-                    ClientId = "cwm.client",
+                    ClientId = "client1",
                     ClientName = "Client Credentials Client",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowedScopes = { "myApi.read" }
                 },
+                new Client
+                {
+                    ClientId = "client2",
+                    ClientName = "Client Credentials Client 2",
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    ClientSecrets = { new Secret("secret".Sha256()) },
+                    AllowedScopes = { "myApi2.read" }
+                }
             };
     }
 }

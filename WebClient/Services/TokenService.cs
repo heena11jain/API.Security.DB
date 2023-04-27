@@ -26,7 +26,7 @@ namespace WebClient.Services
                 var tokenResponse = await client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
                 {
                     Address = _discDocument.TokenEndpoint,
-                    ClientId = "cwm.client",
+                    ClientId = "client1",
                     Scope = scope,
                     ClientSecret = "secret"
                 });
