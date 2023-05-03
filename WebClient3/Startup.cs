@@ -1,16 +1,20 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
-using WebClient.Services;
+using WebClient3.Services;
 
-namespace WebClient
+namespace WebClient3
 {
     public class Startup
     {
@@ -24,8 +28,34 @@ namespace WebClient
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddControllersWithViews();
             services.AddSingleton<ITokenService, TokenService>();
+            IdentityModelEventSource.ShowPII = true;
             services.AddControllersWithViews();
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme =
+                    CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme =
+                    OpenIdConnectDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddOpenIdConnect(options =>
+            {
+                options.SignInScheme =
+                    CookieAuthenticationDefaults.AuthenticationScheme;
+                options.Authority = "https://localhost:5001"; // Auth Server  
+                options.RequireHttpsMetadata = false; // only for development   
+                options.ClientId = "client3"; // client setup in Auth Server  
+                options.ClientSecret = "secret";
+                options.ResponseType = "code"; // means Hybrid flow  // id_token
+                options.Scope.Add("myApi3.read");
+                options.Scope.Add("offline_access");
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.SaveTokens = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,4 +1,5 @@
 ﻿using IdentityModel;
+using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
 using System;
@@ -18,15 +19,32 @@ namespace IDServer
             {
                 new TestUser
                 {
-                    SubjectId = "010",
+                    SubjectId = "1001",
                     Username = "heenaj",
-                    Password = "Password#123",
+                    Password = "heenaj",
                     Claims =
                     {
                         new Claim(JwtClaimTypes.Name, "Heena Jain"),
                         new Claim(JwtClaimTypes.GivenName, "Heena"),
                         new Claim(JwtClaimTypes.FamilyName, "Jain"),
+                        new Claim(JwtClaimTypes.Email, "heena11jain@gmail.com"),
                         new Claim(JwtClaimTypes.WebSite, "http://https://identityserver4.readthedocs.io"),
+                        new Claim(JwtClaimTypes.Address, "Noida")
+                    }
+                },
+                new TestUser
+                {
+                    SubjectId = "2002",
+                    Username = "bob",
+                    Password = "bob",
+                    Claims =
+                    {
+                        new Claim(JwtClaimTypes.Name, "Bob"),
+                        new Claim(JwtClaimTypes.GivenName, "Bob"),
+                        new Claim(JwtClaimTypes.FamilyName, "Singh"),
+                        new Claim(JwtClaimTypes.Email, "heena11jain@gmail.com"),
+                        new Claim(JwtClaimTypes.WebSite, "http://https://identityserver4.readthedocs.io"),
+                        new Claim(JwtClaimTypes.Address, "Noida")
                     }
                 }
             };
@@ -37,6 +55,9 @@ namespace IDServer
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
+                new IdentityResources.Email(),
+                new IdentityResources.Address()
+
             };
 
         //Based on scopes user is Authorized to acces APIs or not.
@@ -47,6 +68,7 @@ namespace IDServer
                 new ApiScope("myApi.write", "write permission for API 1"),
                 new ApiScope("myApi2.read", "read permission for API 2"),
                 new ApiScope("myApi2.write", "write permission for API 2"),
+                 new ApiScope("myApi3.read", "read permission for API 3"),
             };
 
         //This will define API and its scopes and secret. This secret code will be hashed and will be save internally with IdentityServer
@@ -56,13 +78,20 @@ namespace IDServer
                 new ApiResource("resource_myApi")
                 {
                     Scopes = new List<string>{ "myApi.read","myApi.write" },
-                    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
+                    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) },
+                    UserClaims = new List<string> {"role", JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Address, JwtClaimTypes.FamilyName}
                 },
                 new ApiResource("myApi2")
                 {
                     Scopes = new List<string>{ "myApi2.read","myApi.write" },
                     ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
+                },
+                new ApiResource("myApi3")
+                {
+                    Scopes = new List<string>{ "myApi3.read" },
+                    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
                 }
+
             };
 
         //Here we will define who will be granted access to protected resources (APIs)
@@ -84,7 +113,53 @@ namespace IDServer
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowedScopes = { "myApi2.read" }
+                },
+                // OpenID Connect hybrid flow and client credentials client (MVC)
+                new Client
+                {
+                    ClientId = "client3",
+                    ClientName = "Client Hybrid",
+                    AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
+
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+
+                    RedirectUris = { "http://localhost:5003/signin-oidc" }, // web client 3 port
+                    PostLogoutRedirectUris = { "http://localhost:5003/signout-callback-oidc" }, // web client 3 port
+                    RequirePkce = false,
+                    AllowedScopes =
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "myApi3.read"
+                    },
+                    AllowOfflineAccess = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    RequireConsent = false
+                },
+                new Client
+                {
+                    ClientId = "client4",
+                    ClientName = "Client Password",
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    AllowedScopes =
+                    {
+                        "myApi.read",
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.StandardScopes.Address
+                    },
+                    AlwaysIncludeUserClaimsInIdToken = true
                 }
+
+
             };
     }
 }

@@ -45,6 +45,10 @@ namespace WebApi
                 opts.AddPolicy("ReadWeather", policy => {
                     policy.RequireClaim("scope", "myApi.read");  
                 });
+
+                //opts.AddPolicy("AdminRole", policy => {
+                //    policy.RequireRole("Admin");
+                //});
             });
         }
 

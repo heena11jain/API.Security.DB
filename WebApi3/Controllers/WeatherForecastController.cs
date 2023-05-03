@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApi.Controllers
+namespace WebApi3.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -26,8 +26,6 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        [Route("Get")]
-        [Authorize(Policy = "ReadWeather")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
@@ -38,14 +36,6 @@ namespace WebApi.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
-        }
-
-
-        [HttpGet]
-        [Route("GetName")]
-        public string GetName()
-        {
-            return "Heena Jain";
         }
     }
 }

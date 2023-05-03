@@ -16,7 +16,7 @@ namespace WebClient.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public ITokenService _tokenService { get; }
+        public ITokenService _tokenService;
 
         public HomeController(ILogger<HomeController> logger, ITokenService tokenService)
         {
@@ -44,9 +44,10 @@ namespace WebClient.Controllers
             using (var client = new HttpClient())
             {
                 client.SetBearerToken(token.AccessToken);
-                var result = await client.GetAsync("https://localhost:44306/weatherforecast");
+                var result = await client.GetAsync("https://localhost:44306/weatherforecast/get");
                 if (result.IsSuccessStatusCode)
                 {
+                    //var userinfo = client.GetAsync("https://localhost:5001/connect/userInfo").Result;
                     var model = await result.Content.ReadAsStringAsync();
                     data = JsonConvert.DeserializeObject<List<WeatherModel>>(model);
                     return View(data);
