@@ -45,7 +45,7 @@ namespace WebApi.Controllers
         [Route("GetName")]
         public string GetName()
         {
-            return "Heena Jain";
+            return "Test Client Credential Name";
         }
     }
 }

@@ -56,7 +56,10 @@ namespace IDServer
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
-                new IdentityResources.Address()
+                new IdentityResources.Address(),
+
+                 new IdentityResource("custom.profile",
+            userClaims: new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, "location", JwtClaimTypes.Address })
 
             };
 
@@ -66,9 +69,10 @@ namespace IDServer
             {
                 new ApiScope("myApi.read", "read permission for API 1"),
                 new ApiScope("myApi.write", "write permission for API 1"),
-                new ApiScope("myApi2.read", "read permission for API 2"),
-                new ApiScope("myApi2.write", "write permission for API 2"),
-                 new ApiScope("myApi3.read", "read permission for API 3"),
+                //new ApiScope("myApi2.read", "read permission for API 2"),
+                //new ApiScope("myApi2.write", "write permission for API 2"),
+                //new ApiScope("myApi3.read", "read permission for API 3"),
+                //new ApiScope("myApiCC.read", "API client credential"),
             };
 
         //This will define API and its scopes and secret. This secret code will be hashed and will be save internally with IdentityServer
@@ -77,20 +81,25 @@ namespace IDServer
             {
                 new ApiResource("resource_myApi")
                 {
-                    Scopes = new List<string>{ "myApi.read","myApi.write" },
+                    Scopes = new List<string>{ "myApi.read"},
                     ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) },
-                    UserClaims = new List<string> {"role", JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Address, JwtClaimTypes.FamilyName}
                 },
-                new ApiResource("myApi2")
-                {
-                    Scopes = new List<string>{ "myApi2.read","myApi.write" },
-                    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
-                },
-                new ApiResource("myApi3")
-                {
-                    Scopes = new List<string>{ "myApi3.read" },
-                    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
-                }
+                //new ApiResource("myApi2")
+                //{
+                //    Scopes = new List<string>{ "myApi2.read" },
+                //    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
+                //},
+                //new ApiResource("myApi3")
+                //{
+                //    Scopes = new List<string>{ "myApi3.read" },
+                //    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
+                //},
+                //new ApiResource("resource_myApiCC")
+                //{
+                //    Scopes = new List<string>{ "myApiCC.read" },
+                //    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
+                //}
+
 
             };
 
@@ -105,6 +114,7 @@ namespace IDServer
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowedScopes = { "myApi.read" }
+          
                 },
                 new Client
                 {
@@ -112,7 +122,7 @@ namespace IDServer
                     ClientName = "Client Credentials Client 2",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
                     ClientSecrets = { new Secret("secret".Sha256()) },
-                    AllowedScopes = { "myApi2.read" }
+                    AllowedScopes = { "myApiCC.read" }
                 },
                 // OpenID Connect hybrid flow and client credentials client (MVC)
                 new Client

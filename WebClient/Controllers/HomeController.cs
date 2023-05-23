@@ -47,7 +47,6 @@ namespace WebClient.Controllers
                 var result = await client.GetAsync("https://localhost:44306/weatherforecast/get");
                 if (result.IsSuccessStatusCode)
                 {
-                    //var userinfo = client.GetAsync("https://localhost:5001/connect/userInfo").Result;
                     var model = await result.Content.ReadAsStringAsync();
                     data = JsonConvert.DeserializeObject<List<WeatherModel>>(model);
                     return View(data);
@@ -56,10 +55,9 @@ namespace WebClient.Controllers
                 {
                     throw new Exception("Failed to get Data from API");
                 }
-            }
-
-            
+            } 
         }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
