@@ -50,58 +50,38 @@ namespace IDServer
             };
 
         //IdentityResource is used to add identity specific data like - email, userid, phone, address which is unique etc.
-        public static IEnumerable<IdentityResource> IdentityResources =>
-            new IdentityResource[]
-            {
-                new IdentityResources.OpenId(),
-                new IdentityResources.Profile(),
-                new IdentityResources.Email(),
-                new IdentityResources.Address(),
+        //public static IEnumerable<IdentityResource> IdentityResources =>
+        //    new IdentityResource[]
+        //    {
+        //        new IdentityResources.OpenId(),
+        //        new IdentityResources.Profile(),
+        //        new IdentityResources.Email(),
+        //        new IdentityResources.Address(),
 
-                 new IdentityResource("custom.profile",
-            userClaims: new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, "location", JwtClaimTypes.Address })
+        //         new IdentityResource("custom.profile",
+        //    userClaims: new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, "location", JwtClaimTypes.Address })
 
-            };
+        //    };
 
         //Based on scopes user is Authorized to acces APIs or not.
         public static IEnumerable<ApiScope> ApiScopes =>
             new ApiScope[]
             {
                 new ApiScope("myApi.read", "read permission for API 1"),
-                new ApiScope("myApi.write", "write permission for API 1"),
-                //new ApiScope("myApi2.read", "read permission for API 2"),
-                //new ApiScope("myApi2.write", "write permission for API 2"),
-                //new ApiScope("myApi3.read", "read permission for API 3"),
-                //new ApiScope("myApiCC.read", "API client credential"),
+                new ApiScope("myApi.write", "write permission for API 1")
             };
 
         //This will define API and its scopes and secret. This secret code will be hashed and will be save internally with IdentityServer
-        public static IEnumerable<ApiResource> ApiResources =>
-            new ApiResource[]
-            {
-                new ApiResource("resource_myApi")
-                {
-                    Scopes = new List<string>{ "myApi.read"},
-                    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) },
-                },
-                //new ApiResource("myApi2")
-                //{
-                //    Scopes = new List<string>{ "myApi2.read" },
-                //    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
-                //},
-                //new ApiResource("myApi3")
-                //{
-                //    Scopes = new List<string>{ "myApi3.read" },
-                //    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
-                //},
-                //new ApiResource("resource_myApiCC")
-                //{
-                //    Scopes = new List<string>{ "myApiCC.read" },
-                //    ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) }
-                //}
+        //public static IEnumerable<ApiResource> ApiResources =>
+        //    new ApiResource[]
+        //    {
+        //        new ApiResource("resource_myApi")
+        //        {
+        //            Scopes = new List<string>{ "myApi.read"},
+        //            ApiSecrets = new List<Secret>{ new Secret("supersecret".Sha256()) },
+        //        }
+        //    };
 
-
-            };
 
         //Here we will define who will be granted access to protected resources (APIs)
         public static IEnumerable<Client> Clients =>
@@ -110,11 +90,13 @@ namespace IDServer
                 new Client
                 {
                     ClientId = "client1",
-                    ClientName = "Client Credentials Client",
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-                    ClientSecrets = { new Secret("secret".Sha256()) },
-                    AllowedScopes = { "myApi.read" }
-          
+                    ClientSecrets = 
+                    { 
+                        new Secret("secret_client1".Sha256()) 
+                    },
+                    AllowedScopes = { "myApi.read" },
+                    AccessTokenLifetime = 20
                 },
                 new Client
                 {

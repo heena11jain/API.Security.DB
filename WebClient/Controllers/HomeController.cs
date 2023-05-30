@@ -43,7 +43,7 @@ namespace WebClient.Controllers
             var token = await _tokenService.GetToken("myApi.read");
             using (var client = new HttpClient())
             {
-                client.SetBearerToken(token.AccessToken);
+                client.SetBearerToken(token.AccessToken); 
                 var result = await client.GetAsync("https://localhost:44306/weatherforecast/get");
                 if (result.IsSuccessStatusCode)
                 {

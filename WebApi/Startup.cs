@@ -36,8 +36,8 @@ namespace WebApi
             services.AddAuthentication("Bearer")
             .AddIdentityServerAuthentication("Bearer", options =>
             {
-
-                options.ApiName = "resource_myApi";
+                options.ApiSecret = "secret_client1";
+                //options.ApiName = "resource_myApi";
                 options.Authority = "https://localhost:5001";
             });
             services.AddAuthorization(opts =>

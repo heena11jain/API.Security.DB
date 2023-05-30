@@ -28,7 +28,7 @@ namespace WebClient.Services
                     Address = _discDocument.TokenEndpoint,
                     ClientId = "client1",
                     Scope = scope,
-                    ClientSecret = "secret"
+                    ClientSecret = "secret_client1"
                 });
                 if (tokenResponse.IsError)
                 {
